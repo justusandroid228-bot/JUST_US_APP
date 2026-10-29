@@ -32,7 +32,8 @@ jobs:
         with:
           node-version: 22
 
-      - uses: actions/setup-java@v4
+      # Warning ပျောက်အောင် setup-java ကို v5 ကို ပြောင်းထားပါတယ်
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
@@ -70,10 +71,15 @@ jobs:
         working-directory: ./android
         run: ./gradlew assembleDebug --no-daemon
 
+      # APK ဖိုင် တကယ်ထွက်မထွက် စစ်ဆေးဖို့ ထည့်ထားပါတယ်
+      - name: Verify APK exists
+        run: |
+          ls -R android/app/build/outputs/apk/debug/ || echo "APK Folder Not Found"
+
       - uses: actions/upload-artifact@v4
-        if: always() # Error တက်ရင်တောင် artifact ကို ရှာနိုင်အောင်
         with:
           name: JustUs-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: warn # APK မထွက်ရင် error မတက်စေရန်
+          # APK ဖိုင် ရှာမတွေ့ရင် Error တက်မယ့်အစား ရှာတွေ့တဲ့ ဖိုင်အားလုံးကို ယူသွားအောင် path ကို ချဲ့ထားပါတယ်
+          path: android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
           retention-days: 14
