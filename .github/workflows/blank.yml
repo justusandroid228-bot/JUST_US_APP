@@ -68,18 +68,17 @@ jobs:
         working-directory: ./android
         run: ./gradlew assembleDebug --no-daemon
 
-      # ဒီအဆင့်က APK ဖိုင် တကယ်ထွက်မထွက် စစ်ဆေးပေးပါလိမ့်မယ်
-      - name: Check for APK
+      # APK ဖိုင် ရှိမရှိ ရှာပြီး Log ထဲမှာ ပြပေးမယ်
+      - name: Find APK
         run: |
-          echo "Looking for APK files..."
-          find . -name "*.apk" -type f
+          echo "Searching for APK files..."
+          find . -name "*.apk"
 
-      # ဒီအဆင့်က APK ဖိုင် မထွက်ရင် Error တက်မယ့်အစား ကျန်တဲ့ ဖိုင်တွေကို သိမ်းပေးသွားပါလိမ့်မယ်
-      - name: Upload APK
+      # Build လုပ်ပြီး ထွက်လာတဲ့ Output folder တစ်ခုလုံးကို Zip အနေနဲ့ တင်ပေးလိုက်မယ်
+      - name: Upload Outputs
         uses: actions/upload-artifact@v4
         with:
-          name: JustUs-debug-apk
-          path: |
-            android/app/build/outputs/apk/debug/*.apk
-            android/app/build/outputs/apk/**/*
+          name: JustUs-Build-Files
+          # APK ဖိုင်ရော၊ သူ့ folder ပါ အကုန်သိမ်းပေးလိုက်မယ်
+          path: android/app/build/outputs/
           if-no-files-found: warn
