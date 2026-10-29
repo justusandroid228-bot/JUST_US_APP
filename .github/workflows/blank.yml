@@ -26,22 +26,24 @@ jobs:
             exit 1
           fi
 
-      - uses: oven-sh/setup-bun@v2
-
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm' # သင်က bun သုံးရင် ဒီစာကြောင်းကို ဖျက်ပါ
 
-      # Warning ပျောက်အောင် setup-java ကို v5 ကို ပြောင်းထားပါတယ်
-      - uses: actions/setup-java@v5
+      # Bun မသုံးဘဲ ရိုးရိုး npm နဲ့ သုံးကြည့်ခြင်းက Error အကြီးကြီး တက်နိုင်ခြေနည်းပါတယ်
+      - name: Install dependencies
+        run: npm install 
+        # တကယ်လို့ bun ကို သေချာသုံးချင်ရင် အပေါ်က setup-node ကို ဖျက်ပြီး 
+        # ဒီနေရာမှာ - uses: oven-sh/setup-bun@v2 ထည့်ပြီး run: bun install လုပ်ပါ
+
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
       - uses: android-actions/setup-android@v3
-
-      - name: Install dependencies
-        run: bun install
 
       - name: Create Android project (If not exists)
         run: |
@@ -55,7 +57,7 @@ jobs:
           if [ -f "scripts/android/configure.mjs" ]; then
             node scripts/android/configure.mjs
           else
-            echo "::warning::scripts/android/configure.mjs not found, skipping."
+            echo "Configure script not found, skipping."
           fi
 
       - name: Generate icon and splash
@@ -71,15 +73,8 @@ jobs:
         working-directory: ./android
         run: ./gradlew assembleDebug --no-daemon
 
-      # APK ဖိုင် တကယ်ထွက်မထွက် စစ်ဆေးဖို့ ထည့်ထားပါတယ်
-      - name: Verify APK exists
-        run: |
-          ls -R android/app/build/outputs/apk/debug/ || echo "APK Folder Not Found"
-
-      - uses: actions/upload-artifact@v4
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
           name: JustUs-debug-apk
-          # APK ဖိုင် ရှာမတွေ့ရင် Error တက်မယ့်အစား ရှာတွေ့တဲ့ ဖိုင်အားလုံးကို ယူသွားအောင် path ကို ချဲ့ထားပါတယ်
           path: android/app/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
-          retention-days: 14
