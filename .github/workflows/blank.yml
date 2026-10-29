@@ -17,7 +17,6 @@ jobs:
       ADMOB_APP_ID: ${{ vars.ADMOB_APP_ID }}
     
     steps:
-      # Node 20 Warning ပျောက်အောင် checkout ကို v5 ကို ပြောင်းထားပါတယ်
       - uses: actions/checkout@v5
 
       - name: Check app URL
@@ -69,9 +68,18 @@ jobs:
         working-directory: ./android
         run: ./gradlew assembleDebug --no-daemon
 
+      # ဒီအဆင့်က APK ဖိုင် တကယ်ထွက်မထွက် စစ်ဆေးပေးပါလိမ့်မယ်
+      - name: Check for APK
+        run: |
+          echo "Looking for APK files..."
+          find . -name "*.apk" -type f
+
+      # ဒီအဆင့်က APK ဖိုင် မထွက်ရင် Error တက်မယ့်အစား ကျန်တဲ့ ဖိုင်တွေကို သိမ်းပေးသွားပါလိမ့်မယ်
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: JustUs-debug-apk
-          path: android/app/build/outputs/apk/debug/*.apk
+          path: |
+            android/app/build/outputs/apk/debug/*.apk
+            android/app/build/outputs/apk/**/*
           if-no-files-found: warn
