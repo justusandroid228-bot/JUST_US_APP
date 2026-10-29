@@ -17,7 +17,8 @@ jobs:
       ADMOB_APP_ID: ${{ vars.ADMOB_APP_ID }}
     
     steps:
-      - uses: actions/checkout@v4
+      # Node 20 Warning ပျောက်အောင် checkout ကို v5 ကို ပြောင်းထားပါတယ်
+      - uses: actions/checkout@v5
 
       - name: Check app URL
         run: |
@@ -30,7 +31,6 @@ jobs:
         with:
           bun-version: latest
 
-      # Warning ပျောက်အောင် setup-java ကို v5 ကို ပြောင်းထားပါတယ်
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
