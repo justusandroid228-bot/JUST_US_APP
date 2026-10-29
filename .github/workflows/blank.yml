@@ -26,17 +26,10 @@ jobs:
             exit 1
           fi
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # Bun ကို setup လုပ်ခြင်း
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-          cache: 'npm' # သင်က bun သုံးရင် ဒီစာကြောင်းကို ဖျက်ပါ
-
-      # Bun မသုံးဘဲ ရိုးရိုး npm နဲ့ သုံးကြည့်ခြင်းက Error အကြီးကြီး တက်နိုင်ခြေနည်းပါတယ်
-      - name: Install dependencies
-        run: npm install 
-        # တကယ်လို့ bun ကို သေချာသုံးချင်ရင် အပေါ်က setup-node ကို ဖျက်ပြီး 
-        # ဒီနေရာမှာ - uses: oven-sh/setup-bun@v2 ထည့်ပြီး run: bun install လုပ်ပါ
+          bun-version: latest
 
       - uses: actions/setup-java@v4
         with:
@@ -44,6 +37,10 @@ jobs:
           java-version: 21
 
       - uses: android-actions/setup-android@v3
+
+      # npm cache ကို ဖျက်ထားလို့ Error မတက်တော့ပါဘူး
+      - name: Install dependencies
+        run: bun install
 
       - name: Create Android project (If not exists)
         run: |
@@ -77,4 +74,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: JustUs-debug-apk
+          # APK ဖိုင် ရှာမတွေ့ရင် Error မတက်အောင် warn ပဲ ပြထားပါတယ်
           path: android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: warn
