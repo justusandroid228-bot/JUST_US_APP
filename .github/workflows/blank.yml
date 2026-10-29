@@ -12,36 +12,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ၁။ Repository ကို Checkout လုပ်ခြင်း (Node 24 warning မတက်အောင် v5 သို့ မြှင့်ထားသည်)
+      # ၁။ Repository ကို ယူဆောင်ခြင်း
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
-      # ၂။ Node.js ထည့်သွင်းခြင်း
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: '20'
-
-      # ၃။ Java JDK ထည့်သွင်းခြင်း
+      # ၂။ Java JDK 17 ထည့်သွင်းခြင်း
       - name: Set up JDK 17
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # ၄။ Android SDK ထည့်သွင်းခြင်း (Node 24 warning မတက်အောင် v4 သို့မဟုတ် နောက်ဆုံးဗားရှင်းသို့ ပြောင်းထားသည်)
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v4
-
-      # ၅။ Gradle Build လုပ်ရန် Permission ပေးခြင်း
+      # ၃။ Gradle ကို Run လို့ရအောင် Permission ပေးခြင်း
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # ၆။ Debug APK တည်ဆောက်ခြင်း
+      # ၄။ Debug APK တည်ဆောက်ခြင်း (SDK ကို အလိုအလျောက်ချိတ်ဆက်ပေးပါလိမ့်မည်)
       - name: Build Android APK
         run: ./gradlew assembleDebug
 
-      # ၇။ ထွက်လာတဲ့ APK ဖိုင်ကို Download ဆွဲနိုင်ရန် သိမ်းဆည်းပေးခြင်း
+      # ၅။ ထွက်လာတဲ့ APK ဖိုင်ကို Download ဆွဲနိုင်ရန် သိမ်းဆည်းပေးခြင်း
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
